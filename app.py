@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 from db import TeradataDatabase
 from nl2sql import NL2SQL
 import torch
+from logger import logger  # Import the logger
 
 def get_database() -> Any:
     if 'db' not in st.session_state:
@@ -84,6 +85,9 @@ def main():
                     
                     # Display execution time
                     st.text(f"Translation time: {time_format}")
+                    
+                    # Log the translation time
+                    logger.info(f"NL2SQL translation completed in {time_format} - Query: {natural_language_query[:50]}...")
                         
                 except Exception as e:
                     if "connection" in str(e).lower():
@@ -91,6 +95,8 @@ def main():
                         db = get_database()
                     else:
                         st.error(f"Error translating query: {str(e)}")
+                        # Log the error
+                        logger.error(f"Translation error: {str(e)} - Query: {natural_language_query[:50]}...")
         
         # Always display SQL query if it exists in session state
         if st.session_state.get('show_sql') and st.session_state.get('current_sql_query'):

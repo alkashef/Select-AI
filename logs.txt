@@ -1,0 +1,11 @@
+2025-05-02 01:44:48,931 - BorAI - INFO - Logger initialized. Logs will be saved to logs.txt
+2025-05-02 01:44:51,286 - BorAI - INFO - TeradataDatabase instance initialized
+2025-05-02 01:44:51,286 - BorAI - INFO - Operation 'Database connection' started - Details: {'host': 'raven-env-oe7lr1dbadydeuff.env.clearscape.teradata.com', 'database': 'raven'}
+2025-05-02 01:44:53,819 - BorAI - INFO - Operation 'Database connection' completed
+2025-05-02 01:48:24,822 - BorAI - INFO - Operation 'Schema retrieval' started
+2025-05-02 01:48:27,022 - BorAI - DEBUG - Getting sample data for table: branches
+2025-05-02 01:48:27,226 - BorAI - DEBUG - Getting sample data for table: transactions
+2025-05-02 01:48:27,432 - BorAI - INFO - Operation 'Schema retrieval' completed - Details: {'tables_count': 2}
+[2025-05-02 01:49:13] - B or AI - INFO - Logger initialized. Logs will be saved to logs.txt
+2025-05-02 01:49:13,442 - BorAI - INFO - Operation 'Query execution' started - Details: {'query': 'SELECT COUNT(*) FROM raven.branches;'}
+2025-05-02 01:49:14,898 - BorAI - INFO - Operation 'Query execution' completed - Details: {'rows_returned': 1}
