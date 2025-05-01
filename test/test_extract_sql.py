@@ -4,11 +4,16 @@ Test script for the extract_sql function.
 
 This script tests the functionality of extracting SQL queries from model output text.
 """
+import sys
+from pathlib import Path
+
+# Add parent directory to path
+sys.path.append(str(Path(__file__).parent.parent))
 
 import os
 import sys
 from nl2sql import NL2SQL
-from database import Database
+from db import TeradataDatabase
 
 # Add parent directory to path to import nl2sql module
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
@@ -47,26 +52,26 @@ def test_extract_sql() -> None:
         # Clean case with proper format
         {
             "name": "Clean SQL Query",
-            "input": "Question: How many users are there?\n\nSQLQuery: SELECT COUNT(*) FROM users;",
-            "expected": "SELECT COUNT(*) FROM users;"
+            "input": "<SQL Query to run> Question: How many users are there?\n\nSQLQuery: SELECT COUNT(*) FROM users;",
+            "expected": "SELECT COUNT(*) FROM raven.users;"
         },
         # Case with multiple SQLQuery mentions
         {
             "name": "Multiple SQLQuery mentions",
-            "input": "SQLQuery: SELECT * FROM table1; SQLQuery: SELECT COUNT(*) FROM users;",
-            "expected": "SELECT COUNT(*) FROM users;"
+            "input": "... SQLQuery: SELECT * FROM table1; ... <SQL Query to run> ... SQLQuery: SELECT COUNT(*) FROM users;",
+            "expected": "SELECT COUNT(*) FROM raven.users;"
         },
         # Case with additional text
         {
             "name": "SQL with surrounding text",
-            "input": "Here's a query to count users: SQLQuery: SELECT COUNT(*) FROM users;",
-            "expected": "SELECT COUNT(*) FROM users;"
+            "input": "<SQL Query to run> Here's a query to count users: SQLQuery: SELECT COUNT(*) FROM users; more text...",
+            "expected": "SELECT COUNT(*) FROM raven.users;"
         },
         # Complex query with joins
         {
-            "name": "Complex query",
-            "input": "SQLQuery: SELECT u.\"name\", o.\"amount\" FROM \"users\" u JOIN \"orders\" o ON u.\"id\" = o.\"user_id\" WHERE o.\"amount\" > 100 ORDER BY o.\"amount\" DESC LIMIT 5;",
-            "expected": "SELECT u.\"name\", o.\"amount\" FROM \"users\" u JOIN \"orders\" o ON u.\"id\" = o.\"user_id\" WHERE o.\"amount\" > 100 ORDER BY o.\"amount\" DESC LIMIT 5;"
+            "name": "Complex query with LIMIT keyword",
+            "input": "<SQL Query to run> ... SQLQuery: SELECT u.\"name\", o.\"amount\" FROM \"users\" u JOIN \"orders\" o ON u.\"id\" = o.\"user_id\" WHERE o.\"amount\" > 100 ORDER BY o.\"amount\" DESC LIMIT 5;",
+            "expected": "SELECT u.\"name\", o.\"amount\" FROM \"users\" u JOIN \"orders\" o ON u.\"id\" = o.\"user_id\" WHERE o.\"amount\" > 100 ORDER BY o.\"amount\" DESC;"
         },
         # Error case - no SQLQuery
         {
@@ -74,23 +79,23 @@ def test_extract_sql() -> None:
             "input": "This doesn't contain any SQL",
             "expected": "ERROR"
         },
-        # Error case - no semicolon
+        # No semicolon
         {
             "name": "No semicolon",
             "input": "SQLQuery: SELECT COUNT(*) FROM users",
-            "expected": "ERROR"
+            "expected": "SELECT COUNT(*) FROM raven.users;"
         },
         # Tri brackets example
         {
             "name": "Tri brackets",
             "input": "Question: What is the total amount of deposits in Ohio?\n\nSQLQuery: SELECT include < and > SUM(transaction_amount) FROM transactions WHERE transaction_type = 'deposit' AND branch_id IN (SELECT branch_id FROM branches WHERE governorate = 'Ohio');",
-            "expected": '''SELECT include < and > SUM(transaction_amount) FROM transactions WHERE transaction_type = 'deposit' AND branch_id IN (SELECT branch_id FROM branches WHERE governorate = 'Ohio');'''
+            "expected": '''SELECT include < and > SUM(transaction_amount) FROM raven.transactions WHERE transaction_type = 'deposit' AND branch_id IN (SELECT branch_id FROM raven.branches WHERE governorate = 'Ohio');'''
         },
         # Real example
         {
             "name": "Real example",
             "input": "prompt SQLQuery: prompt prompt prompt prompt SQLQuery:<SQL Query to run> prompt  prompt prompt prompt  prompt prompt prompt SQLQuery: SELECT SUM(transaction_amount) FROM transactions WHERE transaction_type = 'deposit' AND branch_id IN (SELECT branch_id FROM branches WHERE governorate = 'Ohio');",
-            "expected": '''SELECT SUM(transaction_amount) FROM transactions WHERE transaction_type = 'deposit' AND branch_id IN (SELECT branch_id FROM branches WHERE governorate = 'Ohio');'''
+            "expected": '''SELECT SUM(transaction_amount) FROM raven.transactions WHERE transaction_type = 'deposit' AND branch_id IN (SELECT branch_id FROM raven.branches WHERE governorate = 'Ohio');'''
         }
     ]
     
@@ -99,7 +104,7 @@ def test_extract_sql() -> None:
     print("TESTING extract_sql FUNCTION")
     print("=" * 80)
     
-    db = Database()
+    db = TeradataDatabase()
     nl2sql = NL2SQL(db)
 
     for i, test_case in enumerate(test_cases, 1):
