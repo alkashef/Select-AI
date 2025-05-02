@@ -1,0 +1,155 @@
+[2025-05-02 02:58:45] - logger:_log - INFO - Logger initialized. Logs will be saved to C:\alkashef\GitHub\BorAI\logs\log.txt
+[2025-05-02 02:58:47] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-05-02 02:58:47] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-05-02 02:58:47] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-05-02 02:58:47] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-05-02 02:58:47] - logger:_log - INFO - TeradataDatabase instance initialized
+[2025-05-02 02:58:47] - logger:_log - INFO - Operation 'Database connection' started - Details: {'host': 'raven-env-oe7lr1dbadydeuff.env.clearscape.teradata.com', 'database': 'raven'}
+[2025-05-02 02:58:50] - logger:_log - INFO - Operation 'Database connection' completed
+[2025-05-02 02:58:51] - logger:_log - INFO - Model 'code-llama-7b-instruct' loading on GPU started
+[2025-05-02 02:58:51] - logger:_log - INFO - Initializing NL2SQL with model path: ./models/code-llama-7b-instruct
+[2025-05-02 02:58:51] - logger:_log - INFO - Loading prompt template from: ./prompt.txt
+[2025-05-02 02:58:51] - logger:_log - DEBUG - Prompt template loaded successfully
+[2025-05-02 02:58:51] - logger:_log - INFO - Loading tokenizer from: ./models/code-llama-7b-instruct
+[2025-05-02 02:58:51] - logger:_log - INFO - Tokenizer loaded successfully, proceeding with model loading
+[2025-05-02 02:58:51] - logger:_log - INFO - Loading model on GPU
+[2025-05-02 02:58:52] - logger:write - ERROR - The `load_in_4bit` and `load_in_8bit` arguments are deprecated and will be removed in the future versions. Please, pass a `BitsAndBytesConfig` object in `quantization_config` argument instead.
+[2025-05-02 02:58:52] - cextension:get_native_library - DEBUG - Loading bitsandbytes native library from: C:\Users\aa186095\AppData\Local\anaconda3\envs\raven-env\Lib\site-packages\bitsandbytes\libbitsandbytes_cuda126.dll
+[2025-05-02 02:58:52] - logger:flush - INFO - Application started. All messages are being logged to: C:\alkashef\GitHub\BorAI\logs\log.txt
+[2025-05-02 02:58:52] - logger:flush - ERROR - Loading checkpoint shards:   0%|                                                                                                                                   | 0/2 [00:00<?, ?it/s]
+[2025-05-02 02:59:00] - logger:flush - ERROR - Loading checkpoint shards:  50%|#############################################################5                                                             | 1/2 [00:07<00:07,  7.83s/it]
+[2025-05-02 02:59:03] - logger:flush - ERROR - Loading checkpoint shards: 100%|###########################################################################################################################| 2/2 [00:10<00:00,  4.97s/it]
+[2025-05-02 02:59:03] - logger:flush - ERROR - Loading checkpoint shards: 100%|###########################################################################################################################| 2/2 [00:10<00:00,  5.40s/it]
+[2025-05-02 02:59:03] - logger:_log - INFO - Model loaded successfully on GPU
+[2025-05-02 02:59:03] - logger:_log - INFO - Model 'code-llama-7b-instruct' loading on GPU completed
+[2025-05-02 03:00:31] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-05-02 03:00:31] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-05-02 03:00:31] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-05-02 03:00:31] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-05-02 03:00:32] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-05-02 03:00:32] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-05-02 03:00:32] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-05-02 03:00:32] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-05-02 03:00:32] - logger:_log - INFO - Processing natural language query: how many transaction sin texas?...
+[2025-05-02 03:00:32] - logger:_log - DEBUG - Generating formatted prompt
+[2025-05-02 03:00:32] - logger:_log - DEBUG - Generating prompt for question: how many transaction sin texas?...
+[2025-05-02 03:00:32] - logger:_log - INFO - Operation 'Schema retrieval' started
+[2025-05-02 03:00:34] - logger:_log - DEBUG - Getting sample data for table: branches
+[2025-05-02 03:00:34] - logger:_log - DEBUG - Getting sample data for table: transactions
+[2025-05-02 03:00:34] - logger:_log - INFO - Operation 'Schema retrieval' completed - Details: {'tables_count': 2}
+[2025-05-02 03:00:34] - logger:_log - DEBUG - Retrieved database schema with 121 tokens
+[2025-05-02 03:00:34] - logger:_log - DEBUG - Tokenizing input
+[2025-05-02 03:00:34] - logger:_log - DEBUG - Moving inputs to GPU
+[2025-05-02 03:00:34] - logger:_log - INFO - Generating SQL with model
+[2025-05-02 03:01:15] - logger:_log - DEBUG - Decoding model output
+[2025-05-02 03:01:15] - logger:_log - DEBUG - Extracting SQL query from raw output
+[2025-05-02 03:01:15] - logger:_log - DEBUG - Extracting SQL from model output
+[2025-05-02 03:01:15] - logger:_log - DEBUG - Running Teradata-specific post-processing
+[2025-05-02 03:01:15] - logger:_log - DEBUG - Applying Teradata post-processing to SQL query
+[2025-05-02 03:01:15] - logger:_log - DEBUG - Teradata post-processing completed
+[2025-05-02 03:01:15] - logger:_log - DEBUG - Successfully extracted SQL: SELECT COUNT(*)
+FROM raven.transactions
+WHERE gove...
+[2025-05-02 03:01:15] - logger:_log - INFO - Successfully generated SQL query: SELECT COUNT(*)
+FROM raven.transactions
+WHERE gove...
+[2025-05-02 03:01:15] - logger:_log - INFO - NL2SQL translation completed in 00:00:43 - Query: how many transaction sin texas?...
+[2025-05-02 03:01:34] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-05-02 03:01:34] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-05-02 03:01:34] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-05-02 03:01:34] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-05-02 03:01:34] - logger:_log - INFO - Operation 'Query execution' started - Details: {'query': "SELECT COUNT(*)\nFROM raven.transactions\nWHERE governorate = 'Texas';"}
+[2025-05-02 03:01:35] - logger:_log - ERROR - query execution - Exception: [Version 20.0.0.28] [Session 2832] [Teradata Database] [Error 5628] Column governorate not found in raven.transactions.
+ at gosqldriver/teradatasql.formatError ErrorUtil.go:85
+ at gosqldriver/teradatasql.(*teradataConnection).formatDatabaseError ErrorUtil.go:223
+ at gosqldriver/teradatasql.(*teradataConnection).makeChainedDatabaseError ErrorUtil.go:239
+ at gosqldriver/teradatasql.(*teradataConnection).processErrorParcel TeradataConnection.go:814
+ at gosqldriver/teradatasql.(*TeradataRows).processResponseBundle TeradataRows.go:2412
+ at gosqldriver/teradatasql.(*TeradataRows).executeSQLRequest TeradataRows.go:898
+ at gosqldriver/teradatasql.newTeradataRows TeradataRows.go:744
+ at gosqldriver/teradatasql.(*teradataStatement).QueryContext TeradataStatement.go:122
+ at gosqldriver/teradatasql.(*teradataConnection).QueryContext TeradataConnection.go:1333
+ at database/sql.ctxDriverQuery ctxutil.go:48
+ at database/sql.(*DB).queryDC.func1 sql.go:1786
+ at database/sql.withLock sql.go:3574
+ at database/sql.(*DB).queryDC sql.go:1781
+ at database/sql.(*Conn).QueryContext sql.go:2037
+ at main.createRows goside.go:1080
+ at main.goCreateRows goside.go:959
+ at _cgoexp_ff5e33a08e40_goCreateRows _cgo_gotypes.go:417
+ at runtime.cgocallbackg1 cgocall.go:444
+ at runtime.cgocallbackg cgocall.go:350
+ at runtime.cgocallback asm_amd64.s:1084
+ at runtime.goexit asm_amd64.s:1700
+[2025-05-02 03:01:35] - logger:_log - INFO - TeradataDatabase instance initialized
+[2025-05-02 03:01:35] - logger:_log - INFO - Operation 'Database connection' started - Details: {'host': 'raven-env-oe7lr1dbadydeuff.env.clearscape.teradata.com', 'database': 'raven'}
+[2025-05-02 03:01:35] - warnings:_showwarnmsg - WARNING - C:\Users\aa186095\AppData\Local\anaconda3\envs\raven-env\Lib\site-packages\teradatasqlalchemy\telemetry\queryband.py:382: UserWarning: [Teradata][teradataml](TDML_2002) Overwriting an existing context associated with Teradata Vantage Connection. Most of the operations on any teradataml DataFrames created before this will not work.
+  return exposed_func(*args, **kwargs)
+
+[2025-05-02 03:01:38] - logger:_log - INFO - Operation 'Database connection' completed
+[2025-05-02 03:02:08] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-05-02 03:02:08] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-05-02 03:02:08] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-05-02 03:02:08] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-05-02 03:02:08] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-05-02 03:02:08] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-05-02 03:02:08] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-05-02 03:02:08] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-05-02 03:02:08] - logger:_log - INFO - Processing natural language query: how many branches in texas?...
+[2025-05-02 03:02:08] - logger:_log - DEBUG - Generating formatted prompt
+[2025-05-02 03:02:08] - logger:_log - DEBUG - Generating prompt for question: how many branches in texas?...
+[2025-05-02 03:02:08] - logger:_log - INFO - Operation 'Schema retrieval' started
+[2025-05-02 03:02:10] - logger:_log - DEBUG - Getting sample data for table: branches
+[2025-05-02 03:02:10] - logger:_log - DEBUG - Getting sample data for table: transactions
+[2025-05-02 03:02:10] - logger:_log - INFO - Operation 'Schema retrieval' completed - Details: {'tables_count': 2}
+[2025-05-02 03:02:10] - logger:_log - DEBUG - Retrieved database schema with 125 tokens
+[2025-05-02 03:02:10] - logger:_log - DEBUG - Tokenizing input
+[2025-05-02 03:02:10] - logger:_log - DEBUG - Moving inputs to GPU
+[2025-05-02 03:02:10] - logger:_log - INFO - Generating SQL with model
+[2025-05-02 03:02:51] - logger:_log - DEBUG - Decoding model output
+[2025-05-02 03:02:51] - logger:_log - DEBUG - Extracting SQL query from raw output
+[2025-05-02 03:02:51] - logger:_log - DEBUG - Extracting SQL from model output
+[2025-05-02 03:02:51] - logger:_log - DEBUG - Running Teradata-specific post-processing
+[2025-05-02 03:02:51] - logger:_log - DEBUG - Applying Teradata post-processing to SQL query
+[2025-05-02 03:02:51] - logger:_log - DEBUG - Teradata post-processing completed
+[2025-05-02 03:02:51] - logger:_log - DEBUG - Successfully extracted SQL: SELECT COUNT(*) FROM raven.branches WHERE governor...
+[2025-05-02 03:02:51] - logger:_log - INFO - Successfully generated SQL query: SELECT COUNT(*) FROM raven.branches WHERE governor...
+[2025-05-02 03:02:51] - logger:_log - INFO - NL2SQL translation completed in 00:00:42 - Query: how many branches in texas?...
+[2025-05-02 03:03:01] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-05-02 03:03:01] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-05-02 03:03:01] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-05-02 03:03:01] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-05-02 03:03:01] - logger:_log - INFO - Operation 'Query execution' started - Details: {'query': "SELECT COUNT(*) FROM raven.branches WHERE governorate = 'Texas';"}
+[2025-05-02 03:03:03] - logger:_log - INFO - Operation 'Query execution' completed - Details: {'rows_returned': 1}
+[2025-05-02 03:03:03] - logger:_log - INFO - SQL execution completed in 00:00:01 - Query: SELECT COUNT(*) FROM raven.branches WHERE governor...
+[2025-05-02 03:03:03] - logger:_log - INFO - Query execution completed in 00:00:01
+[2025-05-02 03:03:22] - logger:write - ERROR - Traceback (most recent call last):
+[2025-05-02 03:03:22] - logger:write - ERROR -   File "C:\Users\aa186095\AppData\Local\anaconda3\envs\raven-env\Lib\site-packages\streamlit\web\bootstrap.py", line 347, in run
+[2025-05-02 03:03:22] - logger:write - ERROR - if asyncio.get_running_loop().is_running():^^^^^^^^^^^^^^^^^^^^^^^^^^RuntimeError: no running event loopDuring handling of the above exception, another exception occurred:
+[2025-05-02 03:03:22] - logger:write - ERROR - Traceback (most recent call last):
+[2025-05-02 03:03:22] - logger:write - ERROR -   File "<frozen runpy>", line 198, in _run_module_as_main
+[2025-05-02 03:03:22] - logger:write - ERROR -   File "<frozen runpy>", line 88, in _run_code
+[2025-05-02 03:03:22] - logger:write - ERROR -   File "C:\Users\aa186095\AppData\Local\anaconda3\envs\borai-env\Scripts\streamlit.exe\__main__.py", line 7, in <module>
+[2025-05-02 03:03:22] - logger:write - ERROR -   File "C:\Users\aa186095\AppData\Local\anaconda3\envs\raven-env\Lib\site-packages\click\core.py", line 1161, in __call__
+[2025-05-02 03:03:22] - logger:write - ERROR - return self.main(*args, **kwargs)^^^^^^^^^^^^^^^^^^^^^^^^^^  File "C:\Users\aa186095\AppData\Local\anaconda3\envs\raven-env\Lib\site-packages\click\core.py", line 1082, in main
+[2025-05-02 03:03:22] - logger:write - ERROR - rv = self.invoke(ctx)^^^^^^^^^^^^^^^^  File "C:\Users\aa186095\AppData\Local\anaconda3\envs\raven-env\Lib\site-packages\click\core.py", line 1697, in invoke
+[2025-05-02 03:03:22] - logger:write - ERROR - return _process_result(sub_ctx.command.invoke(sub_ctx))^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^  File "C:\Users\aa186095\AppData\Local\anaconda3\envs\raven-env\Lib\site-packages\click\core.py", line 1443, in invoke
+[2025-05-02 03:03:22] - logger:write - ERROR - return ctx.invoke(self.callback, **ctx.params)^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^  File "C:\Users\aa186095\AppData\Local\anaconda3\envs\raven-env\Lib\site-packages\click\core.py", line 788, in invoke
+[2025-05-02 03:03:22] - logger:write - ERROR - return __callback(*args, **kwargs)^^^^^^^^^^^^^^^^^^^^^^^^^^^  File "C:\Users\aa186095\AppData\Local\anaconda3\envs\raven-env\Lib\site-packages\streamlit\web\cli.py", line 240, in main_run
+[2025-05-02 03:03:22] - logger:write - ERROR - _main_run(target, args, flag_options=kwargs)  File "C:\Users\aa186095\AppData\Local\anaconda3\envs\raven-env\Lib\site-packages\streamlit\web\cli.py", line 276, in _main_run
+[2025-05-02 03:03:22] - logger:write - ERROR - bootstrap.run(file, is_hello, args, flag_options)  File "C:\Users\aa186095\AppData\Local\anaconda3\envs\raven-env\Lib\site-packages\streamlit\web\bootstrap.py", line 355, in run
+[2025-05-02 03:03:22] - logger:write - ERROR - asyncio.run(main())  File "C:\Users\aa186095\AppData\Local\anaconda3\envs\raven-env\Lib\asyncio\runners.py", line 190, in run
+[2025-05-02 03:03:22] - logger:write - ERROR - return runner.run(main)^^^^^^^^^^^^^^^^  File "C:\Users\aa186095\AppData\Local\anaconda3\envs\raven-env\Lib\asyncio\runners.py", line 118, in run
+[2025-05-02 03:03:22] - logger:write - ERROR - return self._loop.run_until_complete(task)^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^  File "C:\Users\aa186095\AppData\Local\anaconda3\envs\raven-env\Lib\asyncio\base_events.py", line 641, in run_until_complete
+[2025-05-02 03:03:22] - logger:write - ERROR - self.run_forever()  File "C:\Users\aa186095\AppData\Local\anaconda3\envs\raven-env\Lib\asyncio\base_events.py", line 608, in run_forever
+[2025-05-02 03:03:22] - logger:write - ERROR - self._run_once()  File "C:\Users\aa186095\AppData\Local\anaconda3\envs\raven-env\Lib\asyncio\base_events.py", line 1898, in _run_once
+[2025-05-02 03:03:22] - logger:write - ERROR - event_list = self._selector.select(timeout)^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^  File "C:\Users\aa186095\AppData\Local\anaconda3\envs\raven-env\Lib\selectors.py", line 323, in select
+[2025-05-02 03:03:22] - logger:write - ERROR - r, w, _ = self._select(self._readers, self._writers, [], timeout)^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^  File "C:\Users\aa186095\AppData\Local\anaconda3\envs\raven-env\Lib\selectors.py", line 314, in _select
+[2025-05-02 03:03:22] - logger:write - ERROR - r, w, x = select.select(r, w, w, timeout)^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^  File "C:\Users\aa186095\AppData\Local\anaconda3\envs\raven-env\Lib\site-packages\streamlit\web\bootstrap.py", line 44, in signal_handler
+[2025-05-02 03:03:22] - logger:write - ERROR - server.stop()  File "C:\Users\aa186095\AppData\Local\anaconda3\envs\raven-env\Lib\site-packages\streamlit\web\server\server.py", line 469, in stop
+[2025-05-02 03:03:22] - logger:write - ERROR - cli_util.print_to_cli("  Stopping...", fg="blue")  File "C:\Users\aa186095\AppData\Local\anaconda3\envs\raven-env\Lib\site-packages\streamlit\cli_util.py", line 34, in print_to_cli
+[2025-05-02 03:03:22] - logger:write - ERROR - click.secho(message, **kwargs)  File "C:\Users\aa186095\AppData\Local\anaconda3\envs\raven-env\Lib\site-packages\click\termui.py", line 634, in secho
+[2025-05-02 03:03:22] - logger:write - ERROR - return echo(message, file=file, nl=nl, err=err, color=color)^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^  File "C:\Users\aa186095\AppData\Local\anaconda3\envs\raven-env\Lib\site-packages\click\utils.py", line 318, in echo
+[2025-05-02 03:03:22] - logger:write - ERROR - file.write(out)  # type: ignore^^^^^^^^^^^^^^^  File "C:\alkashef\GitHub\BorAI\logger.py", line 241, in write
+[2025-05-02 03:03:22] - logger:flush - ERROR - self.buffer += messageTypeError: can only concatenate str (not "bytes") to str
+[2025-05-02 03:03:22] - logger:flush - INFO - Application started. All messages are being logged to: C:\alkashef\GitHub\BorAI\logs\log.txtApplication started. All messages are being logged to: C:\alkashef\GitHub\BorAI\logs\log.txtApplication started. All messages are being logged to: C:\alkashef\GitHub\BorAI\logs\log.txtApplication started. All messages are being logged to: C:\alkashef\GitHub\BorAI\logs\log.txtApplication started. All messages are being logged to: C:\alkashef\GitHub\BorAI\logs\log.txtApplication started. All messages are being logged to: C:\alkashef\GitHub\BorAI\logs\log.txt
