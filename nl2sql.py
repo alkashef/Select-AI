@@ -1,5 +1,5 @@
 import os
-from typing import Optional, Tuple
+from typing import Optional, Tuple, Dict
 from transformers import AutoModelForCausalLM, AutoTokenizer
 import torch
 from db import TeradataDatabase
@@ -8,7 +8,26 @@ import re
 from logger import logger  # Import the logger
 
 class NL2SQL:
+    _instance: Optional['NL2SQL'] = None
+    _initialized: bool = False
+    
+    def __new__(cls, db: TeradataDatabase, model_path: str = None):
+        # Implement singleton pattern to ensure model is loaded only once
+        if cls._instance is None:
+            logger.info("Creating new NL2SQL instance")
+            cls._instance = super(NL2SQL, cls).__new__(cls)
+        return cls._instance
+        
     def __init__(self, db: TeradataDatabase, model_path: str = None):
+        # Skip initialization if already initialized
+        if self._initialized:
+            logger.debug("Using existing NL2SQL instance - skipping initialization")
+            # Update the database connection if different
+            if self.db != db:
+                logger.info("Updating database connection in existing NL2SQL instance")
+                self.db = db
+            return
+            
         load_dotenv(os.path.join(os.path.dirname(__file__), 'config', '.env'))
         
         self.model_path = model_path or os.getenv('MODEL_PATH', "./models/code-llama-7b-instruct")
@@ -24,8 +43,14 @@ class NL2SQL:
         self.tokenizer: Optional[AutoTokenizer] = None
         
         self.prompt_template = self._load_prompt_template()
+        
+        # Cache the schema during initialization
+        self.db_schema = self.db.get_schema()
+        logger.info("Database schema cached during initialization")
 
         self._load_model()
+        # Mark as initialized
+        self.__class__._initialized = True
 
     def _load_prompt_template(self) -> str:
         prompt_file_path = os.environ.get('PROMPT_PATH')
@@ -88,7 +113,7 @@ class NL2SQL:
 
     def _generate_prompt(self, question: str) -> str:
         logger.debug(f"Generating prompt for question: {question[:50]}...")
-        schema = self.db.get_schema()
+        schema = self.db_schema
         logger.debug(f"Retrieved database schema with {len(schema.split())} tokens")
         return self.prompt_template.format(
             limit=self.result_limit,

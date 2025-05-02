@@ -18,6 +18,7 @@ class TeradataDatabase():
         self.password = os.getenv("TD_PASSWORD")
         self.port = os.getenv("TD_PORT", 1025)
         self.connection = None
+        self._schema_cache = None  # Add schema cache
         logger.info("TeradataDatabase instance initialized")
 
     def connect(self) -> None:
@@ -92,6 +93,10 @@ class TeradataDatabase():
             logger.error("Database connection is not established")
             raise Exception("Database connection is not established. Call connect() first.")
 
+        if self._schema_cache:  # Return cached schema if available
+            logger.debug("Returning cached schema")
+            return self._schema_cache
+
         logger.log_operation("Schema retrieval", "started")
         query = """
         SELECT t.tablename, c.columnname, c.columntype
@@ -135,8 +140,9 @@ class TeradataDatabase():
                 
                 schema_parts.append(table_schema)
             
+            self._schema_cache = "\n".join(schema_parts)  # Cache the schema
             logger.log_operation("Schema retrieval", "completed", {"tables_count": len(schema)})
-            return "\n".join(schema_parts)
+            return self._schema_cache
         except tdml.OperationalError as e:
             logger.exception(e, "retrieving schema")
             raise
