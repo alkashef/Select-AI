@@ -158,3 +158,4 @@ models/
 logs/
 *.log
 log.txt
+logs/log.txt

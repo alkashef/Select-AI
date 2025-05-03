@@ -7,7 +7,8 @@ from db import TeradataDatabase
 from nl2sql import NL2SQL
 import torch
 from logger import logger
-
+# Import page modules
+from modules import assistant_page, database_page, dataset_page, model_page
 
 def initialize_database() -> Optional[TeradataDatabase]:
     """
@@ -72,6 +73,8 @@ def initialize_session_state() -> None:
         st.session_state.current_sql_query = None
     if 'show_sql' not in st.session_state:
         st.session_state.show_sql = False
+    if 'current_page' not in st.session_state:
+        st.session_state.current_page = "assistant"  # Default to assistant page
 
 
 def setup_page_config() -> None:
@@ -83,26 +86,56 @@ def setup_page_config() -> None:
 
 
 def render_sidebar() -> None:
-    """Render the sidebar content with logo and application description."""
+    """
+    Render the sidebar content with logo, application title, and a single navigation selectbox.
+    """
     with st.sidebar:
         logo_path = os.path.join(os.path.dirname(__file__), "img", "td_new_trans.png")
         if os.path.exists(logo_path):
             st.image(logo_path)
-        
+
+        st.markdown(
+            """<p></p><p style='color: grey; margin-bottom: 20px;'><b>Select AI</b> is a natural language to SQL assistant.</p>
+            <p style='color: grey; margin-bottom: 20px;'>Enter your query in natural language, the AI will generate the corresponding SQL query and execute it on Teradata.</p>""",
+            unsafe_allow_html=True
+        )
+
         st.markdown("---")
         
-        st.markdown("# Select AI")
+        # Navigation using selectbox
+        pages = {
+            "Assistant": "assistant",
+            "Dataset": "dataset",
+            "Database Connection": "database",
+            "Model Parameters": "model"
+        }
         
-        st.markdown("""
-            <p style='color: grey;'>
-            Select AI is a natural language to SQL assistant.
-            </p><p style='color: grey;'>
-            Enter your query in natural language, the AI will generate 
-            the corresponding SQL query and execute it on Teradata.
-            </p>
-            """, unsafe_allow_html=True)
+        st.markdown("## Pages")
+        selected_page = st.selectbox(
+            "",
+            options=list(pages.keys()),
+            key="page_selector",
+            index=list(pages.values()).index(st.session_state.current_page) if "current_page" in st.session_state else 0,
+            label_visibility="collapsed"
+        )
         
+        # Check if page has changed and use the new rerun method
+        if st.session_state.current_page != pages[selected_page]:
+            st.session_state.current_page = pages[selected_page]
+            st.rerun()
+
         st.markdown("---")
+        # Github repo link
+        st.markdown(
+            "<a href='http://github.com/bor-ai/bor-ai' target='_blank' style='color: #2c7be5; text-decoration: none;'>"
+            "GitHub Repository</a>",
+            unsafe_allow_html=True
+        )
+        # Copyright notice
+        st.markdown(
+            "<p style='color: grey;'>© 2025 Teradata.</p>",
+            unsafe_allow_html=True
+        )
 
 
 def check_database_connection() -> bool:
@@ -117,12 +150,6 @@ def check_database_connection() -> bool:
     
     db = st.session_state.db
     db_status = db is not None
-    
-    st.sidebar.markdown("#### Connection Status")
-    if db_status:
-        st.sidebar.markdown(f"<span style='color:grey; font-size:small;'>Connected to {db.database} at {db.host}</span>", unsafe_allow_html=True)
-    else:
-        st.sidebar.markdown(f"<span style='color:grey; font-size:small;'>database connection failed</span>", unsafe_allow_html=True)
     
     if not db_status:
         st.error("Database connection failed. Please check your configuration and restart the application.")
@@ -165,122 +192,6 @@ def initialize_model() -> Optional[NL2SQL]:
         return None
 
 
-def format_time(elapsed_seconds: float) -> str:
-    """
-    Format seconds into hours:minutes:seconds format.
-    
-    Args:
-        elapsed_seconds: Time in seconds
-        
-    Returns:
-        str: Formatted time string in HH:MM:SS format
-    """
-    hours, remainder = divmod(elapsed_seconds, 3600)
-    minutes, seconds = divmod(remainder, 60)
-    return f"{int(hours):02d}:{int(minutes):02d}:{int(seconds):02d}"
-
-
-def translate_query(nl2sql_converter: NL2SQL, natural_language_query: str) -> None:
-    """
-    Translate a natural language query to SQL.
-    
-    Args:
-        nl2sql_converter: The model to use for translation
-        natural_language_query: The natural language query to translate
-    """
-    if not natural_language_query.strip():
-        return
-        
-    try:
-        start_time = time.time()
-        sql_query, _ = nl2sql_converter.nl2sql(natural_language_query)
-        end_time = time.time()
-        
-        elapsed_seconds = end_time - start_time
-        time_format = format_time(elapsed_seconds)
-        
-        # Store SQL query in session state for execution and display
-        st.session_state.current_sql_query = sql_query
-        st.session_state.show_sql = True
-        
-        # Log the translation time
-        logger.info(f"NL2SQL translation completed in {time_format} - Query: {natural_language_query[:50]}...")
-            
-    except Exception as e:
-        st.error(f"Error translating query: {str(e)}")
-        logger.error(f"Translation error: {str(e)} - Query: {natural_language_query[:50]}...")
-
-
-def display_sql_query() -> None:
-    """Display the generated SQL query if available in session state."""
-    if st.session_state.get('show_sql') and st.session_state.get('current_sql_query'):
-        st.markdown("#### Generated SQL Query", unsafe_allow_html=True)
-        sql_editor = st.text_area("", value=st.session_state.current_sql_query, height=200, label_visibility="collapsed")
-        st.session_state.current_sql_query = sql_editor
-
-
-def execute_sql_query() -> None:
-    """Execute the current SQL query stored in the session state."""
-    if not st.session_state.get('current_sql_query'):
-        return
-        
-    try:
-        sql_query = st.session_state.current_sql_query
-        
-        start_time = time.time()
-        results = st.session_state.db.execute_query(sql_query)
-        end_time = time.time()
-        
-        elapsed_seconds = end_time - start_time
-        time_format = format_time(elapsed_seconds)
-        
-        logger.info(f"SQL execution completed in {time_format} - Query: {sql_query[:50]}...")
-        
-        if results is not None:
-            st.markdown("#### Query Results")
-            st.dataframe(results)
-        else:
-            st.info("Query executed successfully but returned no results.")
-    except Exception as e:
-        st.error(f"Error executing query: {str(e)}")
-        logger.error(f"SQL execution error: {str(e)} - Query: {sql_query[:50]}...")
-
-
-def display_model_status() -> None:
-    """
-    Display model status in the sidebar, showing model name and whether it's loaded on GPU or CPU.
-    """
-    if 'nl2sql_converter' in st.session_state:
-        model_name = "code-llama-7b-instruct"
-        device_type = "GPU" if torch.cuda.is_available() else "CPU"
-        
-        st.sidebar.markdown("#### Model Status")
-        st.sidebar.markdown(f"<span style='color:grey; font-size:small;'>Model {model_name} is loaded in {device_type}</span>", unsafe_allow_html=True)
-    else:
-        st.sidebar.markdown("#### Model Status")
-        st.sidebar.markdown(f"<span style='color:grey; font-size:small;'>model not loaded</span>", unsafe_allow_html=True)
-
-
-def render_user_interface(nl2sql_converter: NL2SQL) -> None:
-    """
-    Render the main user interface components.
-    
-    Args:
-        nl2sql_converter: The initialized NL2SQL model
-    """
-    st.markdown("#### Natural Language Query")
-    natural_language_query = st.text_area("", height=200, label_visibility="collapsed")
-
-    if st.button("Translate to SQL"):
-        translate_query(nl2sql_converter, natural_language_query)
-    
-    display_sql_query()
-    
-    if st.session_state.get('current_sql_query'):
-        if st.button("Execute Query"):
-            execute_sql_query()
-
-
 def main() -> None:
     """Main application entry point."""
     print(f"Application started. All messages are being logged to: {logger.log_file_path}")
@@ -293,12 +204,18 @@ def main() -> None:
         return
 
     nl2sql_converter = initialize_model()
-    display_model_status()
     
-    if nl2sql_converter is None:
-        return
-        
-    render_user_interface(nl2sql_converter)
+    # Route to the appropriate page based on selection
+    current_page = st.session_state.current_page
+    
+    if current_page == "assistant":
+        assistant_page.render(nl2sql_converter)
+    elif current_page == "dataset":
+        dataset_page.render(st.session_state.db)
+    elif current_page == "database":
+        database_page.render(st.session_state.db)
+    elif current_page == "model":
+        model_page.render(nl2sql_converter)
 
 
 if __name__ == "__main__":
