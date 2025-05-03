@@ -1,118 +1,84 @@
-[2025-05-02 03:38:55] - logger:_log - INFO - Logger initialized. Logs will be saved to C:\alkashef\GitHub\BorAI\logs\log.txt
-[2025-05-02 03:38:58] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
-[2025-05-02 03:38:58] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
-[2025-05-02 03:38:58] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
-[2025-05-02 03:38:58] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
-[2025-05-02 03:38:58] - logger:_log - INFO - Initializing database connection at app startup
-[2025-05-02 03:38:58] - logger:_log - INFO - TeradataDatabase instance initialized
-[2025-05-02 03:38:58] - logger:_log - INFO - Operation 'Database connection' started - Details: {'host': 'raven-env-oe7lr1dbadydeuff.env.clearscape.teradata.com', 'database': 'raven'}
-[2025-05-02 03:39:01] - logger:_log - INFO - Operation 'Database connection' completed
-[2025-05-02 03:39:01] - logger:_log - INFO - Operation 'Schema retrieval' started
-[2025-05-02 03:39:01] - logger:_log - DEBUG - Getting sample data for table: branches
-[2025-05-02 03:39:01] - logger:_log - DEBUG - Getting sample data for table: transactions
-[2025-05-02 03:39:01] - logger:_log - INFO - Operation 'Schema retrieval' completed - Details: {'tables_count': 2}
-[2025-05-02 03:39:01] - logger:_log - INFO - Database connection established and schema cached at startup
-[2025-05-02 03:39:02] - logger:_log - INFO - Model 'code-llama-7b-instruct' loading on GPU started
-[2025-05-02 03:39:02] - logger:_log - INFO - Creating new NL2SQL instance
-[2025-05-02 03:39:02] - logger:_log - INFO - Initializing NL2SQL with model path: ./models/code-llama-7b-instruct
-[2025-05-02 03:39:02] - logger:_log - INFO - Loading prompt template from: ./prompt.txt
-[2025-05-02 03:39:02] - logger:_log - DEBUG - Prompt template loaded successfully
-[2025-05-02 03:39:02] - logger:_log - DEBUG - Returning cached schema
-[2025-05-02 03:39:02] - logger:_log - INFO - Database schema cached during initialization
-[2025-05-02 03:39:02] - logger:_log - INFO - Loading tokenizer from: ./models/code-llama-7b-instruct
-[2025-05-02 03:39:02] - logger:_log - INFO - Tokenizer loaded successfully, proceeding with model loading
-[2025-05-02 03:39:02] - logger:_log - INFO - Loading model on GPU
-[2025-05-02 03:39:03] - logger:write - ERROR - The `load_in_4bit` and `load_in_8bit` arguments are deprecated and will be removed in the future versions. Please, pass a `BitsAndBytesConfig` object in `quantization_config` argument instead.
-[2025-05-02 03:39:03] - cextension:get_native_library - DEBUG - Loading bitsandbytes native library from: C:\Users\aa186095\AppData\Local\anaconda3\envs\raven-env\Lib\site-packages\bitsandbytes\libbitsandbytes_cuda126.dll
-[2025-05-02 03:39:04] - logger:flush - INFO - Application started. All messages are being logged to: C:\alkashef\GitHub\BorAI\logs\log.txt
-[2025-05-02 03:39:04] - logger:flush - ERROR - Loading checkpoint shards:   0%|                                                                                                                     | 0/2 [00:00<?, ?it/s]
-[2025-05-02 03:39:11] - logger:flush - ERROR - Loading checkpoint shards:  50%|######################################################5                                                      | 1/2 [00:07<00:07,  7.85s/it]
-[2025-05-02 03:39:14] - logger:flush - ERROR - Loading checkpoint shards: 100%|#############################################################################################################| 2/2 [00:10<00:00,  4.88s/it]
-[2025-05-02 03:39:14] - logger:flush - ERROR - Loading checkpoint shards: 100%|#############################################################################################################| 2/2 [00:10<00:00,  5.32s/it]
-[2025-05-02 03:39:14] - logger:_log - INFO - Model loaded successfully on GPU
-[2025-05-02 03:39:14] - logger:_log - INFO - Performing model warmup with query: 'how many branches are in texas?'
-[2025-05-02 03:39:14] - logger:_log - INFO - Processing natural language query: how many branches are in texas?...
-[2025-05-02 03:39:14] - logger:_log - DEBUG - Generating formatted prompt
-[2025-05-02 03:39:14] - logger:_log - DEBUG - Generating prompt for question: how many branches are in texas?...
-[2025-05-02 03:39:14] - logger:_log - DEBUG - Retrieved database schema with 126 tokens
-[2025-05-02 03:39:14] - logger:_log - DEBUG - Tokenizing input
-[2025-05-02 03:39:14] - logger:_log - DEBUG - Moving inputs to GPU
-[2025-05-02 03:39:14] - logger:_log - INFO - Generating SQL with model
-[2025-05-02 03:39:55] - logger:_log - DEBUG - Decoding model output
-[2025-05-02 03:39:55] - logger:_log - DEBUG - Extracting SQL query from raw output
-[2025-05-02 03:39:55] - logger:_log - DEBUG - Extracting SQL from model output
-[2025-05-02 03:39:55] - logger:_log - DEBUG - Running Teradata-specific post-processing
-[2025-05-02 03:39:55] - logger:_log - DEBUG - Applying Teradata post-processing to SQL query
-[2025-05-02 03:39:55] - logger:_log - DEBUG - Teradata post-processing completed
-[2025-05-02 03:39:55] - logger:_log - DEBUG - Successfully extracted SQL: SELECT COUNT(branch_id) FROM raven.branches WHERE ...
-[2025-05-02 03:39:55] - logger:_log - INFO - Successfully generated SQL query: SELECT COUNT(branch_id) FROM raven.branches WHERE ...
-[2025-05-02 03:39:55] - logger:_log - INFO - Model warmup completed in 40.73 seconds. Generated SQL: SELECT COUNT(branch_id) FROM raven.branches WHERE governorate = 'Texas';
-[2025-05-02 03:39:55] - logger:_log - INFO - Model 'code-llama-7b-instruct' loading on GPU completed
-[2025-05-02 03:42:05] - logger:_log - INFO - Logger initialized. Logs will be saved to C:\alkashef\GitHub\BorAI\logs\log.txt
-[2025-05-02 03:42:05] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
-[2025-05-02 03:42:05] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
-[2025-05-02 03:42:05] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
-[2025-05-02 03:42:05] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
-[2025-05-02 03:42:05] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
-[2025-05-02 03:42:05] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
-[2025-05-02 03:42:05] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
-[2025-05-02 03:42:05] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
-[2025-05-02 03:42:05] - logger:_log - INFO - Processing natural language query: how many deposits bigger than 1000 where made in o...
-[2025-05-02 03:42:05] - logger:_log - DEBUG - Generating formatted prompt
-[2025-05-02 03:42:05] - logger:_log - DEBUG - Generating prompt for question: how many deposits bigger than 1000 where made in o...
-[2025-05-02 03:42:05] - logger:_log - DEBUG - Retrieved database schema with 126 tokens
-[2025-05-02 03:42:05] - logger:_log - DEBUG - Tokenizing input
-[2025-05-02 03:42:05] - logger:_log - DEBUG - Moving inputs to GPU
-[2025-05-02 03:42:05] - logger:_log - INFO - Generating SQL with model
-[2025-05-02 03:42:46] - logger:_log - DEBUG - Decoding model output
-[2025-05-02 03:42:46] - logger:_log - DEBUG - Extracting SQL query from raw output
-[2025-05-02 03:42:46] - logger:_log - DEBUG - Extracting SQL from model output
-[2025-05-02 03:42:46] - logger:_log - DEBUG - Running Teradata-specific post-processing
-[2025-05-02 03:42:46] - logger:_log - DEBUG - Applying Teradata post-processing to SQL query
-[2025-05-02 03:42:46] - logger:_log - DEBUG - Teradata post-processing completed
-[2025-05-02 03:42:46] - logger:_log - DEBUG - Successfully extracted SQL: SELECT COUNT(*)
-FROM raven.transactions
-WHERE tran...
-[2025-05-02 03:42:46] - logger:_log - INFO - Successfully generated SQL query: SELECT COUNT(*)
-FROM raven.transactions
-WHERE tran...
-[2025-05-02 03:42:46] - logger:_log - INFO - NL2SQL translation completed in 00:00:40 - Query: how many deposits bigger than 1000 where made in o...
-[2025-05-02 03:42:56] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
-[2025-05-02 03:42:56] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
-[2025-05-02 03:42:56] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
-[2025-05-02 03:42:56] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
-[2025-05-02 03:42:56] - logger:_log - INFO - Operation 'Query execution' started - Details: {'query': "SELECT COUNT(*)\nFROM raven.transactions\nWHERE transaction_type = 'Deposit'\nAND transaction_amount > ..."}
-[2025-05-02 03:42:57] - logger:_log - INFO - Operation 'Query execution' completed - Details: {'rows_returned': 1}
-[2025-05-02 03:42:57] - logger:_log - INFO - SQL execution completed in 00:00:01 - Query: SELECT COUNT(*)
-FROM raven.transactions
-WHERE tran...
-[2025-05-02 03:43:23] - logger:write - ERROR - Traceback (most recent call last):
-[2025-05-02 03:43:23] - logger:write - ERROR -   File "C:\Users\aa186095\AppData\Local\anaconda3\envs\raven-env\Lib\site-packages\streamlit\web\bootstrap.py", line 347, in run
-[2025-05-02 03:43:23] - logger:write - ERROR - if asyncio.get_running_loop().is_running():^^^^^^^^^^^^^^^^^^^^^^^^^^RuntimeError: no running event loopDuring handling of the above exception, another exception occurred:
-[2025-05-02 03:43:23] - logger:write - ERROR - Traceback (most recent call last):
-[2025-05-02 03:43:23] - logger:write - ERROR -   File "<frozen runpy>", line 198, in _run_module_as_main
-[2025-05-02 03:43:23] - logger:write - ERROR -   File "<frozen runpy>", line 88, in _run_code
-[2025-05-02 03:43:23] - logger:write - ERROR -   File "C:\Users\aa186095\AppData\Local\anaconda3\envs\borai-env\Scripts\streamlit.exe\__main__.py", line 7, in <module>
-[2025-05-02 03:43:23] - logger:write - ERROR -   File "C:\Users\aa186095\AppData\Local\anaconda3\envs\raven-env\Lib\site-packages\click\core.py", line 1161, in __call__
-[2025-05-02 03:43:23] - logger:write - ERROR - return self.main(*args, **kwargs)^^^^^^^^^^^^^^^^^^^^^^^^^^  File "C:\Users\aa186095\AppData\Local\anaconda3\envs\raven-env\Lib\site-packages\click\core.py", line 1082, in main
-[2025-05-02 03:43:23] - logger:write - ERROR - rv = self.invoke(ctx)^^^^^^^^^^^^^^^^  File "C:\Users\aa186095\AppData\Local\anaconda3\envs\raven-env\Lib\site-packages\click\core.py", line 1697, in invoke
-[2025-05-02 03:43:23] - logger:write - ERROR - return _process_result(sub_ctx.command.invoke(sub_ctx))^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^  File "C:\Users\aa186095\AppData\Local\anaconda3\envs\raven-env\Lib\site-packages\click\core.py", line 1443, in invoke
-[2025-05-02 03:43:23] - logger:write - ERROR - return ctx.invoke(self.callback, **ctx.params)^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^  File "C:\Users\aa186095\AppData\Local\anaconda3\envs\raven-env\Lib\site-packages\click\core.py", line 788, in invoke
-[2025-05-02 03:43:23] - logger:write - ERROR - return __callback(*args, **kwargs)^^^^^^^^^^^^^^^^^^^^^^^^^^^  File "C:\Users\aa186095\AppData\Local\anaconda3\envs\raven-env\Lib\site-packages\streamlit\web\cli.py", line 240, in main_run
-[2025-05-02 03:43:23] - logger:write - ERROR - _main_run(target, args, flag_options=kwargs)  File "C:\Users\aa186095\AppData\Local\anaconda3\envs\raven-env\Lib\site-packages\streamlit\web\cli.py", line 276, in _main_run
-[2025-05-02 03:43:23] - logger:write - ERROR - bootstrap.run(file, is_hello, args, flag_options)  File "C:\Users\aa186095\AppData\Local\anaconda3\envs\raven-env\Lib\site-packages\streamlit\web\bootstrap.py", line 355, in run
-[2025-05-02 03:43:23] - logger:write - ERROR - asyncio.run(main())  File "C:\Users\aa186095\AppData\Local\anaconda3\envs\raven-env\Lib\asyncio\runners.py", line 190, in run
-[2025-05-02 03:43:23] - logger:write - ERROR - return runner.run(main)^^^^^^^^^^^^^^^^  File "C:\Users\aa186095\AppData\Local\anaconda3\envs\raven-env\Lib\asyncio\runners.py", line 118, in run
-[2025-05-02 03:43:23] - logger:write - ERROR - return self._loop.run_until_complete(task)^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^  File "C:\Users\aa186095\AppData\Local\anaconda3\envs\raven-env\Lib\asyncio\base_events.py", line 641, in run_until_complete
-[2025-05-02 03:43:23] - logger:write - ERROR - self.run_forever()  File "C:\Users\aa186095\AppData\Local\anaconda3\envs\raven-env\Lib\asyncio\base_events.py", line 608, in run_forever
-[2025-05-02 03:43:23] - logger:write - ERROR - self._run_once()  File "C:\Users\aa186095\AppData\Local\anaconda3\envs\raven-env\Lib\asyncio\base_events.py", line 1898, in _run_once
-[2025-05-02 03:43:23] - logger:write - ERROR - event_list = self._selector.select(timeout)^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^  File "C:\Users\aa186095\AppData\Local\anaconda3\envs\raven-env\Lib\selectors.py", line 323, in select
-[2025-05-02 03:43:23] - logger:write - ERROR - r, w, _ = self._select(self._readers, self._writers, [], timeout)^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^  File "C:\Users\aa186095\AppData\Local\anaconda3\envs\raven-env\Lib\selectors.py", line 314, in _select
-[2025-05-02 03:43:23] - logger:write - ERROR - r, w, x = select.select(r, w, w, timeout)^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^  File "C:\Users\aa186095\AppData\Local\anaconda3\envs\raven-env\Lib\site-packages\streamlit\web\bootstrap.py", line 44, in signal_handler
-[2025-05-02 03:43:23] - logger:write - ERROR - server.stop()  File "C:\Users\aa186095\AppData\Local\anaconda3\envs\raven-env\Lib\site-packages\streamlit\web\server\server.py", line 469, in stop
-[2025-05-02 03:43:23] - logger:write - ERROR - cli_util.print_to_cli("  Stopping...", fg="blue")  File "C:\Users\aa186095\AppData\Local\anaconda3\envs\raven-env\Lib\site-packages\streamlit\cli_util.py", line 34, in print_to_cli
-[2025-05-02 03:43:23] - logger:write - ERROR - click.secho(message, **kwargs)  File "C:\Users\aa186095\AppData\Local\anaconda3\envs\raven-env\Lib\site-packages\click\termui.py", line 634, in secho
-[2025-05-02 03:43:23] - logger:write - ERROR - return echo(message, file=file, nl=nl, err=err, color=color)^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^  File "C:\Users\aa186095\AppData\Local\anaconda3\envs\raven-env\Lib\site-packages\click\utils.py", line 318, in echo
-[2025-05-02 03:43:23] - logger:write - ERROR - file.write(out)  # type: ignore^^^^^^^^^^^^^^^  File "C:\alkashef\GitHub\BorAI\logger.py", line 241, in write
-[2025-05-02 03:43:23] - logger:flush - ERROR - self.buffer += messageTypeError: can only concatenate str (not "bytes") to str
-[2025-05-02 03:43:23] - logger:flush - INFO - Application started. All messages are being logged to: C:\alkashef\GitHub\BorAI\logs\log.txtApplication started. All messages are being logged to: C:\alkashef\GitHub\BorAI\logs\log.txtApplication started. All messages are being logged to: C:\alkashef\GitHub\BorAI\logs\log.txt
+[2025-05-03 08:15:02] - logger:_log - INFO - Logger initialized. Logs will be saved to C:\alkashef\GitHub\BorAI\logs\log.txt
+[2025-05-03 08:15:04] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-05-03 08:15:04] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-05-03 08:15:04] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-05-03 08:15:04] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-05-03 08:15:04] - logger:_log - INFO - Initializing database connection at app startup
+[2025-05-03 08:15:04] - logger:_log - INFO - TeradataDatabase instance initialized
+[2025-05-03 08:15:04] - logger:_log - INFO - Operation 'Database connection' started - Details: {'host': 'raven-env-oe7lr1dbadydeuff.env.clearscape.teradata.com', 'database': 'raven'}
+[2025-05-03 08:15:20] - logger:_log - INFO - Operation 'Database connection' completed
+[2025-05-03 08:15:20] - logger:_log - INFO - Operation 'Schema retrieval' started
+[2025-05-03 08:15:21] - logger:_log - DEBUG - Getting sample data for table: branches
+[2025-05-03 08:15:21] - logger:_log - DEBUG - Getting sample data for table: transactions
+[2025-05-03 08:15:22] - logger:_log - INFO - Operation 'Schema retrieval' completed - Details: {'tables_count': 2}
+[2025-05-03 08:15:22] - logger:_log - INFO - Database connection established and schema cached at startup
+[2025-05-03 08:15:22] - logger:_log - INFO - Model 'code-llama-7b-instruct' loading on GPU started
+[2025-05-03 08:15:22] - logger:_log - INFO - Creating new NL2SQL instance
+[2025-05-03 08:15:22] - logger:_log - INFO - Initializing NL2SQL with model path: ./models/code-llama-7b-instruct
+[2025-05-03 08:15:22] - logger:_log - INFO - Loading prompt template from: ./prompt.txt
+[2025-05-03 08:15:22] - logger:_log - DEBUG - Prompt template loaded successfully
+[2025-05-03 08:15:22] - logger:_log - DEBUG - Returning cached schema
+[2025-05-03 08:15:22] - logger:_log - INFO - Database schema cached during initialization
+[2025-05-03 08:15:22] - logger:_log - INFO - Loading tokenizer from: ./models/code-llama-7b-instruct
+[2025-05-03 08:15:22] - logger:_log - INFO - Tokenizer loaded successfully, proceeding with model loading
+[2025-05-03 08:15:22] - logger:_log - INFO - Loading model on GPU
+[2025-05-03 08:15:24] - logger:write - ERROR - The `load_in_4bit` and `load_in_8bit` arguments are deprecated and will be removed in the future versions. Please, pass a `BitsAndBytesConfig` object in `quantization_config` argument instead.
+[2025-05-03 08:15:24] - cextension:get_native_library - DEBUG - Loading bitsandbytes native library from: C:\Users\aa186095\AppData\Local\anaconda3\envs\raven-env\Lib\site-packages\bitsandbytes\libbitsandbytes_cuda126.dll
+[2025-05-03 08:15:24] - logger:flush - INFO - Application started. All messages are being logged to: C:\alkashef\GitHub\BorAI\logs\log.txt
+[2025-05-03 08:15:24] - logger:flush - ERROR - Loading checkpoint shards:   0%|                                                          | 0/2 [00:00<?, ?it/s]
+[2025-05-03 08:15:38] - logger:flush - ERROR - Loading checkpoint shards:  50%|#########################                         | 1/2 [00:13<00:13, 13.88s/it]
+[2025-05-03 08:15:43] - logger:flush - ERROR - Loading checkpoint shards: 100%|##################################################| 2/2 [00:18<00:00,  8.62s/it]
+[2025-05-03 08:15:43] - logger:flush - ERROR - Loading checkpoint shards: 100%|##################################################| 2/2 [00:18<00:00,  9.41s/it]
+[2025-05-03 08:15:43] - logger:_log - INFO - Model loaded successfully on GPU
+[2025-05-03 08:15:43] - logger:_log - INFO - Performing model warmup with query: 'how many branches are in texas?'
+[2025-05-03 08:15:43] - logger:_log - INFO - Processing natural language query: how many branches are in texas?...
+[2025-05-03 08:15:43] - logger:_log - DEBUG - Generating formatted prompt
+[2025-05-03 08:15:43] - logger:_log - DEBUG - Generating prompt for question: how many branches are in texas?...
+[2025-05-03 08:15:43] - logger:_log - DEBUG - Retrieved database schema with 128 tokens
+[2025-05-03 08:15:43] - logger:_log - DEBUG - Tokenizing input
+[2025-05-03 08:15:43] - logger:_log - DEBUG - Moving inputs to GPU
+[2025-05-03 08:15:43] - logger:_log - INFO - Generating SQL with model
+[2025-05-03 08:16:24] - logger:_log - DEBUG - Decoding model output
+[2025-05-03 08:16:24] - logger:_log - DEBUG - Extracting SQL query from raw output
+[2025-05-03 08:16:24] - logger:_log - DEBUG - Extracting SQL from model output
+[2025-05-03 08:16:24] - logger:_log - DEBUG - Running Teradata-specific post-processing
+[2025-05-03 08:16:24] - logger:_log - DEBUG - Applying Teradata post-processing to SQL query
+[2025-05-03 08:16:24] - logger:_log - DEBUG - Teradata post-processing completed
+[2025-05-03 08:16:24] - logger:_log - DEBUG - Successfully extracted SQL: SELECT COUNT(*) FROM raven.branches WHERE governor...
+[2025-05-03 08:16:24] - logger:_log - INFO - Successfully generated SQL query: SELECT COUNT(*) FROM raven.branches WHERE governor...
+[2025-05-03 08:16:24] - logger:_log - INFO - Model warmup completed in 40.39 seconds. Generated SQL: SELECT COUNT(*) FROM raven.branches WHERE governorate = 'Texas';
+[2025-05-03 08:16:24] - logger:_log - INFO - Model 'code-llama-7b-instruct' loading on GPU completed
+[2025-05-03 08:16:53] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-05-03 08:16:53] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-05-03 08:16:53] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-05-03 08:16:53] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-05-03 08:16:53] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-05-03 08:16:53] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-05-03 08:16:53] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-05-03 08:16:53] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-05-03 08:16:53] - logger:_log - INFO - Processing natural language query: what is the number of deposits in ohio?...
+[2025-05-03 08:16:53] - logger:_log - DEBUG - Generating formatted prompt
+[2025-05-03 08:16:53] - logger:_log - DEBUG - Generating prompt for question: what is the number of deposits in ohio?...
+[2025-05-03 08:16:53] - logger:_log - DEBUG - Retrieved database schema with 128 tokens
+[2025-05-03 08:16:53] - logger:_log - DEBUG - Tokenizing input
+[2025-05-03 08:16:53] - logger:_log - DEBUG - Moving inputs to GPU
+[2025-05-03 08:16:53] - logger:_log - INFO - Generating SQL with model
+[2025-05-03 08:17:33] - logger:_log - DEBUG - Decoding model output
+[2025-05-03 08:17:33] - logger:_log - DEBUG - Extracting SQL query from raw output
+[2025-05-03 08:17:33] - logger:_log - DEBUG - Extracting SQL from model output
+[2025-05-03 08:17:33] - logger:_log - DEBUG - Running Teradata-specific post-processing
+[2025-05-03 08:17:33] - logger:_log - DEBUG - Applying Teradata post-processing to SQL query
+[2025-05-03 08:17:33] - logger:_log - DEBUG - Teradata post-processing completed
+[2025-05-03 08:17:33] - logger:_log - DEBUG - Successfully extracted SQL: SELECT COUNT(transaction_type)
+FROM raven.transact...
+[2025-05-03 08:17:33] - logger:_log - INFO - Successfully generated SQL query: SELECT COUNT(transaction_type)
+FROM raven.transact...
+[2025-05-03 08:17:33] - logger:_log - INFO - NL2SQL translation completed in 00:00:39 - Query: what is the number of deposits in ohio?...
+[2025-05-03 08:17:39] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-05-03 08:17:39] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-05-03 08:17:39] - PngImagePlugin:call - DEBUG - STREAM b'IHDR' 16 13
+[2025-05-03 08:17:39] - PngImagePlugin:call - DEBUG - STREAM b'IDAT' 41 5539
+[2025-05-03 08:17:39] - logger:_log - INFO - Operation 'Query execution' started - Details: {'query': "SELECT COUNT(transaction_type)\nFROM raven.transactions\nWHERE transaction_type = 'Deposit'\nAND branch..."}
+[2025-05-03 08:17:49] - logger:_log - INFO - Operation 'Query execution' completed - Details: {'rows_returned': 1}
+[2025-05-03 08:17:49] - logger:_log - INFO - SQL execution completed in 00:00:09 - Query: SELECT COUNT(transaction_type)
+FROM raven.transact...
