@@ -1,4 +1,5 @@
 import os
+import sys
 from typing import Optional, Tuple, Dict
 from transformers import AutoModelForCausalLM, AutoTokenizer
 import torch
@@ -6,6 +7,18 @@ from db import TeradataDatabase
 from dotenv import load_dotenv
 import re
 from logger import logger  # Import the logger
+
+# Handle optimum import with fallback strategy
+try:
+    from optimum.bettertransformer import BetterTransformer
+    OPTIMUM_AVAILABLE = True
+    logger.info("Optimum library successfully imported")
+except ImportError:
+    OPTIMUM_AVAILABLE = False
+    logger.warning(f"Failed to import optimum library. Using environment: {sys.executable}")
+    logger.warning(f"Python path: {sys.path}")
+    logger.warning("Will proceed without optimization")
+
 
 class NL2SQL:
     _instance: Optional['NL2SQL'] = None
@@ -47,6 +60,11 @@ class NL2SQL:
         # Cache the schema during initialization
         self.db_schema = self.db.get_schema()
         logger.info("Database schema cached during initialization")
+        
+        # Initialize cache for prompt prefix
+        self.prefix_tokens = None
+        self.prefix_attention_mask = None
+        self.use_cache = True  # Flag to enable/disable caching
 
         self._load_model()
         # Mark as initialized
@@ -64,6 +82,7 @@ class NL2SQL:
             return template
 
     def _load_model(self) -> None:
+        """Load and optimize the model using BetterTransformer if available."""
         logger.info(f"Loading tokenizer from: {self.model_path}")
         try:
             self.tokenizer = AutoTokenizer.from_pretrained(
@@ -78,7 +97,7 @@ class NL2SQL:
             
             if torch.cuda.is_available():
                 logger.info("Loading model on GPU")
-                self.model = AutoModelForCausalLM.from_pretrained(
+                model = AutoModelForCausalLM.from_pretrained(
                     self.model_path,
                     torch_dtype=torch.float16,
                     device_map="auto",
@@ -91,11 +110,19 @@ class NL2SQL:
                     offload_state_dict=True,
                     local_files_only=True
                 )
-                logger.info("Model loaded successfully on GPU")
+                
+                # Apply BetterTransformer optimization if available
+                if OPTIMUM_AVAILABLE:
+                    # Keep the original model accessible
+                    self.model = BetterTransformer.transform(model, keep_original_model=True)
+                    logger.info("Model loaded and optimized with BetterTransformer on GPU (original model preserved)")
+                else:
+                    self.model = model
+                    logger.info("Model loaded on GPU (optimization skipped - optimum not available)")
             else:
                 logger.info("Loading model on CPU (GPU not available)")
                 try:
-                    self.model = AutoModelForCausalLM.from_pretrained(
+                    model = AutoModelForCausalLM.from_pretrained(
                         self.model_path,
                         torch_dtype=torch.float32,
                         low_cpu_mem_usage=True,
@@ -103,7 +130,15 @@ class NL2SQL:
                         offload_state_dict=True,
                         local_files_only=True
                     )
-                    logger.info("Model loaded successfully on CPU")
+                    
+                    # Apply BetterTransformer optimization if available
+                    if OPTIMUM_AVAILABLE:
+                        # Keep the original model accessible
+                        self.model = BetterTransformer.transform(model, keep_original_model=True)
+                        logger.info("Model loaded and optimized with BetterTransformer on CPU (original model preserved)")
+                    else:
+                        self.model = model
+                        logger.info("Model loaded on CPU (optimization skipped - optimum not available)")
                 except Exception as e:
                     logger.error(f"Error loading model: {e}")
                     raise
@@ -190,27 +225,96 @@ class NL2SQL:
         logger.debug("Teradata post-processing completed")
         return sql_query
 
+    def reset_cache(self) -> None:
+        """Reset the prompt prefix cache."""
+        logger.debug("Resetting prompt prefix cache")
+        self.prefix_tokens = None
+        self.prefix_attention_mask = None
+
     def nl2sql(self, prompt: str) -> Tuple[str, str]:
         logger.info(f"Processing natural language query: {prompt[:50]}...")
         if not self.model or not self.tokenizer:
             logger.error("Model not loaded")
             raise RuntimeError("Model not loaded.")
 
-        logger.debug("Generating formatted prompt")
-        formatted_prompt = self._generate_prompt(prompt)
+        if self.use_cache and self.prefix_tokens is None:
+            # Create and cache the prefix part of the prompt (template + schema)
+            logger.debug("Creating prompt prefix cache")
+            prefix_template = self.prompt_template.format(
+                limit=self.result_limit,
+                schema=self.db_schema,
+                question="{question}"  # Placeholder for actual question
+            )
+            # Store the index where the question should be inserted
+            self.question_placeholder_position = prefix_template.find("{question}")
+            
+            # Tokenize just the prefix part
+            prefix_inputs = self.tokenizer(
+                prefix_template.split("{question}")[0],
+                return_tensors="pt",
+                padding=True,
+                truncation=True,
+                max_length=self.input_context_length
+            )
+            
+            if torch.cuda.is_available():
+                prefix_inputs = {k: v.to('cuda') for k, v in prefix_inputs.items()}
+                
+            self.prefix_tokens = prefix_inputs["input_ids"]
+            self.prefix_attention_mask = prefix_inputs["attention_mask"]
+            logger.debug(f"Prompt prefix cache created, size: {self.prefix_tokens.shape}")
 
-        logger.debug("Tokenizing input")
-        inputs = self.tokenizer(
-            formatted_prompt,
-            return_tensors="pt",
-            padding=True,
-            truncation=True,
-            max_length=self.input_context_length
-        )
-        
-        if torch.cuda.is_available():
-            logger.debug("Moving inputs to GPU")
-            inputs = {k: v.to('cuda') for k, v in inputs.items()}
+        if self.use_cache and self.prefix_tokens is not None:
+            # Use the cached prefix tokens and append the question tokens
+            logger.debug("Using cached prompt prefix")
+            question_inputs = self.tokenizer(
+                prompt,
+                return_tensors="pt",
+                padding=True,
+                truncation=True,
+                max_length=512  # Limit question length
+            )
+            
+            if torch.cuda.is_available():
+                question_inputs = {k: v.to('cuda') for k, v in question_inputs.items()}
+            
+            # Combine prefix and question tokens
+            input_ids = torch.cat([
+                self.prefix_tokens, 
+                question_inputs["input_ids"][:, 1:]  # Skip the start token of question
+            ], dim=1)
+            
+            attention_mask = torch.cat([
+                self.prefix_attention_mask,
+                question_inputs["attention_mask"][:, 1:]  # Skip the start token of question
+            ], dim=1)
+            
+            # Truncate if needed
+            if input_ids.shape[1] > self.input_context_length:
+                input_ids = input_ids[:, :self.input_context_length]
+                attention_mask = attention_mask[:, :self.input_context_length]
+                
+            inputs = {
+                "input_ids": input_ids,
+                "attention_mask": attention_mask
+            }
+            
+            formatted_prompt = None  # Not needed with caching
+        else:
+            # Fallback to the original approach
+            logger.debug("Generating formatted prompt without cache")
+            formatted_prompt = self._generate_prompt(prompt)
+            inputs = self.tokenizer(
+                formatted_prompt,
+                return_tensors="pt",
+                padding=True,
+                truncation=True,
+                max_length=self.input_context_length
+            )
+            
+            if torch.cuda.is_available():
+                logger.debug("Moving inputs to GPU")
+                inputs = {k: v.to('cuda') for k, v in inputs.items()}
         
         logger.info("Generating SQL with model")
         outputs = self.model.generate(
@@ -220,7 +324,8 @@ class NL2SQL:
             pad_token_id=self.tokenizer.pad_token_id,
             do_sample=False,
             temperature=1.0,
-            num_beams=1
+            num_beams=1,
+            use_cache=True  # Enable KV caching in the model
         )
         
         logger.debug("Decoding model output")
@@ -232,3 +337,18 @@ class NL2SQL:
         
         logger.info(f"Successfully generated SQL query: {sql_query[:50]}...")
         return sql_query, raw_sql
+
+    def get_original_model(self) -> Optional[AutoModelForCausalLM]:
+        """
+        Return the original unoptimized model if available.
+        
+        Returns:
+            The original model if BetterTransformer was used with keep_original_model=True,
+            otherwise returns None.
+        """
+        if OPTIMUM_AVAILABLE and hasattr(self.model, "original_model"):
+            logger.debug("Returning original unoptimized model")
+            return self.model.original_model
+        else:
+            logger.warning("Original model not available - either BetterTransformer was not used or keep_original_model was False")
+            return None

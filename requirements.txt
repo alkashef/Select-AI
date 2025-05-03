@@ -10,3 +10,4 @@ bitsandbytes
 openpyxl
 flask
 pandas
+optimum
