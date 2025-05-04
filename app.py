@@ -112,7 +112,7 @@ def render_sidebar() -> None:
         
         st.markdown("## Pages")
         selected_page = st.selectbox(
-            "",
+            "Pages",
             options=list(pages.keys()),
             key="page_selector",
             index=list(pages.values()).index(st.session_state.current_page) if "current_page" in st.session_state else 0,

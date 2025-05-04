@@ -1,23 +1,15 @@
 import os
 import sys
-from typing import Optional, Tuple, Dict
+from typing import Optional, Tuple
 from transformers import AutoModelForCausalLM, AutoTokenizer
 import torch
 from db import TeradataDatabase
 from dotenv import load_dotenv
 import re
-from logger import logger  # Import the logger
+from logger import logger
 
-# Handle optimum import with fallback strategy
-try:
-    from optimum.bettertransformer import BetterTransformer
-    OPTIMUM_AVAILABLE = True
-    logger.info("Optimum library successfully imported")
-except ImportError:
-    OPTIMUM_AVAILABLE = False
-    logger.warning(f"Failed to import optimum library. Using environment: {sys.executable}")
-    logger.warning(f"Python path: {sys.path}")
-    logger.warning("Will proceed without optimization")
+# Remove optimum import and related code
+logger.info("Using native PyTorch optimizations (no external optimization libraries)")
 
 
 class NL2SQL:
@@ -82,7 +74,11 @@ class NL2SQL:
             return template
 
     def _load_model(self) -> None:
-        """Load and optimize the model using BetterTransformer if available."""
+        """
+        Load the model using native PyTorch optimizations.
+        Modern PyTorch (>=2.1.1) and transformers (>=4.36) automatically
+        use optimized implementations like scaled_dot_product_attention.
+        """
         logger.info(f"Loading tokenizer from: {self.model_path}")
         try:
             self.tokenizer = AutoTokenizer.from_pretrained(
@@ -96,8 +92,8 @@ class NL2SQL:
             logger.info("Tokenizer loaded successfully, proceeding with model loading")
             
             if torch.cuda.is_available():
-                logger.info("Loading model on GPU")
-                model = AutoModelForCausalLM.from_pretrained(
+                logger.info(f"Loading model on GPU: {torch.cuda.get_device_name(0)}")
+                self.model = AutoModelForCausalLM.from_pretrained(
                     self.model_path,
                     torch_dtype=torch.float16,
                     device_map="auto",
@@ -110,40 +106,20 @@ class NL2SQL:
                     offload_state_dict=True,
                     local_files_only=True
                 )
-                
-                # Apply BetterTransformer optimization if available
-                if OPTIMUM_AVAILABLE:
-                    # Keep the original model accessible
-                    self.model = BetterTransformer.transform(model, keep_original_model=True)
-                    logger.info("Model loaded and optimized with BetterTransformer on GPU (original model preserved)")
-                else:
-                    self.model = model
-                    logger.info("Model loaded on GPU (optimization skipped - optimum not available)")
+                logger.info("Model loaded on GPU with native PyTorch optimizations")
             else:
                 logger.info("Loading model on CPU (GPU not available)")
-                try:
-                    model = AutoModelForCausalLM.from_pretrained(
-                        self.model_path,
-                        torch_dtype=torch.float32,
-                        low_cpu_mem_usage=True,
-                        offload_folder="offload",
-                        offload_state_dict=True,
-                        local_files_only=True
-                    )
-                    
-                    # Apply BetterTransformer optimization if available
-                    if OPTIMUM_AVAILABLE:
-                        # Keep the original model accessible
-                        self.model = BetterTransformer.transform(model, keep_original_model=True)
-                        logger.info("Model loaded and optimized with BetterTransformer on CPU (original model preserved)")
-                    else:
-                        self.model = model
-                        logger.info("Model loaded on CPU (optimization skipped - optimum not available)")
-                except Exception as e:
-                    logger.error(f"Error loading model: {e}")
-                    raise
+                self.model = AutoModelForCausalLM.from_pretrained(
+                    self.model_path,
+                    torch_dtype=torch.float32,
+                    low_cpu_mem_usage=True,
+                    offload_folder="offload",
+                    offload_state_dict=True,
+                    local_files_only=True
+                )
+                logger.info("Model loaded on CPU with native PyTorch optimizations")
         except Exception as e:
-            logger.error(f"Error in model loading process: {e}")
+            logger.error(f"Error in model loading process: {str(e)}")
             raise
 
     def _generate_prompt(self, question: str) -> str:
@@ -338,17 +314,3 @@ class NL2SQL:
         logger.info(f"Successfully generated SQL query: {sql_query[:50]}...")
         return sql_query, raw_sql
 
-    def get_original_model(self) -> Optional[AutoModelForCausalLM]:
-        """
-        Return the original unoptimized model if available.
-        
-        Returns:
-            The original model if BetterTransformer was used with keep_original_model=True,
-            otherwise returns None.
-        """
-        if OPTIMUM_AVAILABLE and hasattr(self.model, "original_model"):
-            logger.debug("Returning original unoptimized model")
-            return self.model.original_model
-        else:
-            logger.warning("Original model not available - either BetterTransformer was not used or keep_original_model was False")
-            return None
