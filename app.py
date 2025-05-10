@@ -127,7 +127,7 @@ def render_sidebar() -> None:
         st.markdown("---")
         # Github repo link
         st.markdown(
-            "<a href='http://github.com/bor-ai/bor-ai' target='_blank' style='color: #2c7be5; text-decoration: none;'>"
+            "<a href='http://github.com/alkashef/Select-AI' target='_blank' style='color: #2c7be5; text-decoration: none;'>"
             "GitHub Repository</a>",
             unsafe_allow_html=True
         )

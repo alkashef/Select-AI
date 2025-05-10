@@ -12,22 +12,6 @@ Key features:
 - Query execution against Teradata databases
 - Batch processing mode for multiple queries
 
-## Table of Contents
-
-- [Project Structure](#project-structure)
-- [Setup](#setup)
-  - [Prerequisites](#prerequisites)
-  - [Conda Environment](#conda-environment)
-  - [GPU Configuration](#gpu-configuration)
-  - [Download Model](#download-model)
-  - [Database Setup](#database-setup)
-- [Testing](#testing)
-- [Usage](#usage)
-  - [Web UI Mode](#web-ui-mode-default)
-  - [Batch Mode](#batch-mode)
-- [Troubleshooting](#troubleshooting)
-- [Contributing](#contributing)
-
 ## Technology Stack
 
 - **Frontend**: Streamlit - Python library for interactive web applications
@@ -38,7 +22,7 @@ Key features:
 - **Testing**: Python unittest framework - For automated testing
 - **Configuration**: dotenv - For environment variable management
 
-#### Important Files:
+## Important Files:
 
 - Core Application: `app.py` - Main entry point with Streamlit interface
 - Database Operations: `db.py` - Teradata connection handling
