@@ -25,50 +25,27 @@ Key features:
 - [Usage](#usage)
   - [Web UI Mode](#web-ui-mode-default)
   - [Batch Mode](#batch-mode)
-- [Docker Deployment](#docker-deployment)
 - [Troubleshooting](#troubleshooting)
 - [Contributing](#contributing)
 
-## Project Structure
-```
-SelectAI/
-├── app.py                   # Main application entry point
-├── batch.py                 # Batch processing module
-├── db.py                    # Database connection and operations
-├── nl2sql.py                # Core NL-to-SQL conversion logic
-├── prompt.txt               # Prompt template for the LLM
-├── requirements.txt         # Python dependencies
-├── config/                  # Configuration files
-│   └── .env                 # Environment variables
-├── models/                  # Storage for local LLM models
-│   └── code-llama-7b-instruct/
-├── scripts/                 # Utility scripts
-│   ├── clear_cache.py       # Clears model cache
-│   ├── download_model.py    # Downloads LLM model
-│   └── td_init.sql          # Database initialization
-├── static/                  # Web assets
-│   ├── css/                 # Stylesheets
-│   ├── img/                 # Images
-│   └── js/                  # JavaScript files
-├── templates/               # HTML templates
-│   └── index.html           # Main application page
-├── test/                    # Test modules
-│   ├── end2end/             # Contains questions files for batch mode operation and Excel sheet outputs 
-│   ├── test_db.py           # Database tests
-│   ├── test_model.py        # Model tests
-│   └── test_extract_sql.py  # SQL extraction tests
-└── docs/                    # Project documents
-    ├── dataset              # Contains data dictionary and sample data in CSV format.
-    └── snapshots            # UI screenshots 
-```
+## Technology Stack
+
+- **Frontend**: Streamlit - Python library for interactive web applications
+- **Backend**: Python 3.9+ - Core application logic
+- **AI Model**: Code Llama 7B Instruct - For natural language to SQL translation
+- **Database**: Teradata - Enterprise data warehouse solution
+- **Model Optimization**: PyTorch, transformers, bitsandbytes - For model loading and inference
+- **Testing**: Python unittest framework - For automated testing
+- **Configuration**: dotenv - For environment variable management
 
 #### Important Files:
 
-- GUI/frontend: `app.py`, `static\`, and `templates\`
-- Backend: `db.py` and `nl2sql.py`
-- Batch mode: `app.py` and `batch.py`
-- Model folder: `models\code-llama-7b-instruct\`
-- Prompt template: `prompt.txt`
+- Core Application: `app.py` - Main entry point with Streamlit interface
+- Database Operations: `db.py` - Teradata connection handling
+- NL-to-SQL Engine: `nl2sql.py` - Model interaction and query generation
+- UI Components: `modules/*.py` - Modular interface components
+- Model Template: `prompt.txt` - Prompt engineering template for the LLM
+- Utilities: `scripts/*.py` - Helper scripts for model management
 
 ## Setup for Development
 
@@ -130,10 +107,17 @@ The application uses the Code Llama 7B Instruct model for NL-to-SQL conversion.
 
 1. Use the download script:
    ```bash
-   python scripts/download_model.py
+   python scripts/download_model.py --repo_id codellama/CodeLlama-7b-Instruct-hf --save_path ./models/code-llama-7b-instruct
    ```
 
 2. The model will be downloaded to the `models/code-llama-7b-instruct/` directory.
+
+3. For offline usage, set the environment variable:
+
+   ```
+   export HF_HUB_OFFLINE=1  # Linux/Mac
+   set HF_HUB_OFFLINE=1     # Windows
+   ```
 
 #### Database Setup
 
@@ -203,37 +187,3 @@ python app.py --batch
 ```
 
 This processes a batch of questions from the file specified in `QUESTIONS_PATH` in the `.env` file and outputs results to an Excel file.
-
-## Containerization  
-
-#### Docker Setup
-
-1. Build the docker image:
-   ```bash
-   docker build --no-cache -t selectai .
-   ```
-
-2. Make sure the Clearscape environment is running.
-
-3. Run the container with port mapping and model mounting:
-   ```bash
-   docker run --gpus all -p 5000:5000 -v "$(pwd)/models:/app/models" selectai
-   ```
-   Replace `$(pwd)` with the path to the models directory.
-
-4. After starting, verify with:
-   ```bash
-   docker ps
-   ```
-   You should see a line like:
-   ```
-   0.0.0.0:5000->5000/tcp
-   ```
-   in the PORTS column.
-
-5. Access the application:  
-   Open your browser and go to [http://127.0.0.1:5000](http://127.0.0.1:5000)
-
-#### Additional Requirements
-
-The model should be downloaded to the `code-llama-7b-instruct` directory before building the Docker image or should be mounted as a volume as shown in the docker-compose.yml file.
